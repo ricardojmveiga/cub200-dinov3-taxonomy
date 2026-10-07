@@ -1,0 +1,34 @@
+{
+  "machine": "rtx3090-linux",
+  "env": {
+    "os": "Linux",
+    "release": "6.8.0-124-generic",
+    "machine": "x86_64",
+    "python": "3.8.13",
+    "numpy": "1.24.4",
+    "cpu_count": 24,
+    "threads": 23,
+    "torch": "2.4.1+cu121",
+    "cuda_available": true,
+    "mps_available": false
+  },
+  "features": "real",
+  "reps": 5,
+  "timings": [
+    {
+      "device": "cuda",
+      "label": "CUDA:NVIDIA GeForce RTX 3090",
+      "threads": null,
+      "knn_s": 0.056,
+      "cluster_torch_s": 0.046
+    },
+    {
+      "device": "cpu",
+      "label": "CPU:x86_64 x23 threads",
+      "threads": 23,
+      "knn_s": 1.871,
+      "cluster_torch_s": 3.7084,
+      "cluster_s": 76.2587
+    }
+  ]
+}

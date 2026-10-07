@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper below."
+title: "cub200-dinov3-taxonomy: reproduction package for \"Does Taxonomy Emerge for Birds Too?\""
+type: software
+authors:
+  - family-names: Veiga
+    given-names: Ricardo J. M.
+    affiliation: "NOVA LINCS & ISE, Universidade do Algarve"
+    orcid: "https://orcid.org/0000-0002-7557-8304"
+  - family-names: Rodrigues
+    given-names: João M. F.
+    affiliation: "NOVA LINCS & ISE, Universidade do Algarve"
+    orcid: "https://orcid.org/0000-0002-3562-6025"
+repository-code: "https://github.com/ricardojmveiga/cub200-dinov3-taxonomy"
+license: MIT
+version: 1.0.0
+keywords:
+  - CUB-200-2011
+  - DINOv3
+  - self-supervised learning
+  - clustering
+  - taxonomy
+preferred-citation:
+  type: conference-paper
+  title: "Does Taxonomy Emerge for Birds Too? A Fine-Coarse Dissociation in Label-Free Taxonomic Recovery on CUB-200"
+  authors:
+    - family-names: Veiga
+      given-names: Ricardo J. M.
+      orcid: "https://orcid.org/0000-0002-7557-8304"
+    - family-names: Rodrigues
+      given-names: João M. F.
+      orcid: "https://orcid.org/0000-0002-3562-6025"
+  collection-title: "32nd Portuguese Conference on Pattern Recognition (RECPAD 2026)"
+  conference:
+    name: "RECPAD 2026"
+    city: Viseu
+    country: PT
+    date-start: "2026-10-30"
+    date-end: "2026-10-30"
+  status: in-press
+  year: 2026

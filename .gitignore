@@ -1,0 +1,13 @@
+# large / regenerated artifacts (the small ones under data/ ARE committed)
+dataset/
+data/cub200_cls_embeddings.npy
+data/*.part
+data/smoke_*.npy
+data/experiments_out/cub_experiments_smoke.json
+*.tgz
+__pycache__/
+*.pyc
+.venv*/
+.pytest_cache/
+.DS_Store
+._*

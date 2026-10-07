@@ -1,0 +1,12 @@
+# Core dependencies for steps 2-4 (experiments, centroids, figures) + tests.
+# CPU-only, cross-platform (Windows / macOS / Linux). No GPU needed.
+# Reproducibility note: stochastic per-seed clustering values (MiniBatch k-means) are
+# scikit-learn-version / BLAS-summation sensitive, especially on the near-chance Order rank;
+# the reported *means* are stable and reproduce, and the bundled result JSONs are the frozen
+# source of truth (the tests check against them). Deterministic methods (Ward) reproduce exactly.
+numpy>=1.24
+scipy>=1.10
+scikit-learn>=1.1
+threadpoolctl>=3.0          # runtime BLAS thread cap (also a scikit-learn dependency)
+matplotlib>=3.6
+pytest>=7.0
