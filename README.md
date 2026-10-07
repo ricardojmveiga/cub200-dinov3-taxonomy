@@ -7,7 +7,8 @@ Code and data for the RECPAD 2026 paper by Ricardo J. M. Veiga and João M. F. R
 
 On CUB-200-2011, frozen DINOv3-7B CLS features clustered without labels recover the fine ranks
 (species Adjusted Rand Index up to 0.739, genus 0.587), while the coarse Order rank stays near
-chance (ARI at most 0.092) across six standard clusterers and a full PCA-dimensionality sweep.
+chance: ARI at most 0.092 across six standard clusterers, and below 0.1 at every dimensionality of a
+PCA sweep.
 
 - **Embeddings** (193 MB): [Hugging Face dataset `ricardojmveiga/cub200-dinov3-7b-embeddings`](https://huggingface.co/datasets/ricardojmveiga/cub200-dinov3-7b-embeddings), also attached to the [v1.0.0 release](https://github.com/ricardojmveiga/cub200-dinov3-taxonomy/releases/tag/v1.0.0)
 - **Interactive demo**: [Hugging Face Space `ricardojmveiga/cub200-dinov3-taxonomy-demo`](https://huggingface.co/spaces/ricardojmveiga/cub200-dinov3-taxonomy-demo)
@@ -30,7 +31,7 @@ On Windows, use `py setup_env.py`, then `.venv\Scripts\python -m pytest tests/` 
 `.venv\Scripts\python 04_make_figures.py`. Activating the environment first
 (`source .venv/bin/activate`, or `.venv\Scripts\activate` on Windows) lets you type `python` instead.
 
-This takes about a minute, most of it installing packages. Everything it needs is bundled in
+This takes a few minutes, most of it installing packages. Everything it needs is bundled in
 [`data/`](data/): the integer taxonomy labels, the image order, the 200 species centroids and the
 stored clustering results. The tests check every number in the paper's Table 1 and preamble
 against those files, and CI runs them on Linux, Windows and macOS. The one number that needs the
@@ -43,15 +44,24 @@ differ from the committed ones in bytes, not in what they show.
 | Step | Script | Needs | What it does |
 | --- | --- | --- | --- |
 | 0 | `00_download_dataset.py` | ~2.3 GB disk | Downloads CUB-200-2011 from CaltechDATA (1.15 GB, kept after extraction) and extracts the 11,788 images. |
-| 1 | `01_extract_embeddings.py` | CUDA GPU with ≥ 16 GB, access to the gated DINOv3 weights | Frozen DINOv3-7B CLS token → `(11788, 4096)` float32, L2-normalised, in the order of `data/cub200_image_paths.json`. |
-| 2 | `02_run_experiments.py` | CPU, the embeddings | E1 divisive vs flat, **E2 the six clusterers (Table 1)**, **E3 the PCA sweep (Figure 1)**. `--smoke` runs on random features instead (ARI ≈ 0 check, about a minute). |
+| 1 | `01_extract_embeddings.py` | CUDA GPU (the authors used a 24 GB RTX 3090; with 16 GB try `--batch-size 1`), access to the gated DINOv3 weights | Frozen DINOv3-7B CLS token → `(11788, 4096)` float32, L2-normalised, in the order of `data/cub200_image_paths.json`. |
+| 2 | `02_run_experiments.py` | CPU, the embeddings | E1 divisive vs flat, **E2 the six clusterers (Table 1)**, **E3 the PCA sweep (Figure 1)**. `--smoke` runs on random features instead (ARI ≈ 0 check, one to two minutes). |
 | 3 | `03_compute_centroids.py` | any device, the embeddings | Species centroids (Figure 2) and **kNN@1@Order = 99.9 %**. |
 | 4 | `04_make_figures.py` | CPU | Figure 1, Figure 2, Table 1 and the result values, from `data/`. |
+
+```bash
+python3 setup_env.py --with-torch                  # adds PyTorch, torchvision and transformers
+.venv/bin/python 00_download_dataset.py
+.venv/bin/python 01_extract_embeddings.py          # GPU; see the notes below
+.venv/bin/python 02_run_experiments.py             # CPU, about 80 minutes
+.venv/bin/python 03_compute_centroids.py
+.venv/bin/python 04_make_figures.py
+```
 
 You can skip steps 0 and 1 by downloading the released embeddings:
 
 ```bash
-.venv/bin/python fetch_embeddings.py   # Hugging Face first, the GitHub release if that fails; SHA-256 checked
+.venv/bin/python fetch_embeddings.py   # SHA-256 checked; Hugging Face if huggingface_hub is installed, else the GitHub release
 ```
 
 Notes:
@@ -59,14 +69,18 @@ Notes:
 - Steps 2 to 4 need only `requirements.txt`. Step 1 also needs `requirements-torch.txt`
   (`python3 setup_env.py --with-torch`: PyTorch, torchvision and `transformers` 4.56 or newer; on
   Linux the default PyPI wheels already include CUDA, otherwise see <https://pytorch.org>).
-- The DINOv3 weights are gated on Hugging Face: accept the DINOv3 License on the
-  [model page](https://huggingface.co/facebook/dinov3-vit7b16-pretrain-lvd1689m) and log in once
-  (`hf auth login`, or set `HF_TOKEN`) before step 1. The first run downloads about 27 GB. Your use
-  of the model is governed by that licence.
+- The DINOv3 weights are gated on Hugging Face: request access by accepting the DINOv3 License on
+  the [model page](https://huggingface.co/facebook/dinov3-vit7b16-pretrain-lvd1689m) (requests are
+  approved manually, which can take a while), then log in once with `.venv/bin/hf auth login` (or
+  set `HF_TOKEN`) before step 1. The first run downloads about 27 GB into the Hugging Face cache
+  (`~/.cache/huggingface`, or wherever `HF_HOME` points). Your use of the model is governed by that
+  licence.
 - Step 1 matches the extraction behind the released file (bfloat16 weights, forward pass under
   bfloat16 autocast, float32 before normalising), so a re-extraction agrees with it closely, not bit
   for bit. `--limit 64 --out data/smoke_64.npy` is a quick check; without `--out` it overwrites
   `data/cub200_cls_embeddings.npy`.
+- `02_run_experiments.py --control` writes `cub_experiments_control_rerun.json` and `--n N` writes
+  `cub_experiments_subsample.json`; neither replaces the bundled results.
 - A full step-2 run writes `data/experiments_out/cub_experiments_real.json`, which step 4 then uses
   in place of the bundled results. The bundled runs took about 25 min (E1 and E3) and 53 min (E2).
   Per-seed values of the stochastic clusterers can differ slightly across scikit-learn and BLAS
@@ -78,7 +92,7 @@ Notes:
 
 Every script runs on Linux, Windows and macOS (Apple silicon included). Paths go through
 `pathlib` in [`reprocub/common.py`](reprocub/common.py), and the compute device is picked
-automatically (CUDA, then Apple MPS, then CPU; force one with `--device`). On CPU, BLAS, OpenMP and
+automatically (CUDA, then Apple MPS, then CPU; steps 1 and 3 and the benchmark take `--device` to force one). On CPU, BLAS, OpenMP and
 PyTorch are capped at all cores but one, so a laptop stays responsive. Seeds are fixed
 (`42, 123, 456, 789, 2024`).
 

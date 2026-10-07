@@ -108,7 +108,10 @@ def main() -> int:
             if i == len(order) - 1:
                 print(f"  {name} failed: {type(e).__name__}: {e}", flush=True)
                 return 1
-            print(f"  {name} failed ({type(e).__name__}: {str(e)[:120]}); trying the next source", flush=True)
+            if isinstance(e, ImportError):
+                print("  huggingface_hub is not installed; using the GitHub release", flush=True)
+            else:
+                print(f"  {name} failed ({type(e).__name__}: {str(e)[:120]}); trying the next source", flush=True)
             continue
         part.replace(dst)
         X = np.load(dst, mmap_mode="r")

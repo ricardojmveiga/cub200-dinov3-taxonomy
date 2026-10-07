@@ -36,12 +36,12 @@ from reprocub.experiments import SEEDS, control, exp1, exp2, exp3, load_embeddin
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--emb", type=Path, default=EMBEDDINGS_NPY,
                     help="embeddings .npy (default: data/cub200_cls_embeddings.npy)")
     ap.add_argument("--smoke", action="store_true", help="random matrix, no embeddings")
     ap.add_argument("--control", action="store_true",
-                    help="random-feature control at the REAL oracle K -> cub_experiments_control.json")
+                    help="random-feature control at the REAL oracle K -> cub_experiments_control_rerun.json")
     ap.add_argument("--n", type=int, default=0, help="subsample to N points (smoke defaults to 500)")
     ap.add_argument("--only", nargs="*", choices=["e1", "e2", "e3"], help="run only these studies")
     ap.add_argument("--threads", type=int, default=None, help="CPU threads (default cores-1)")
@@ -60,7 +60,7 @@ def main() -> int:
         out = {"mode": "control", "n": n, "oracle_k": oracle, "seeds": SEEDS,
                "note": "random N(0,1) features, L2-normalised, flat MiniBatch k-means at the REAL oracle K",
                "per_rank": res, "env": env_summary()}
-        dst = EXPERIMENTS_OUT / "cub_experiments_control.json"
+        dst = EXPERIMENTS_OUT / "cub_experiments_control_rerun.json"   # the bundled control stays the reference
         dst.write_text(json.dumps(out, indent=1), encoding="utf-8")
         for r in RANKS:
             print(f"  {r:8s} ARI={res[r]['ari']['mean']:+.4f} (max|{max(abs(v) for v in res[r]['ari']['runs']):.4f}|)"
@@ -90,7 +90,8 @@ def main() -> int:
     if "e3" in run: out["E3_pca_sweep"] = exp3(X, labels, oracle)
     out["elapsed_s"] = round(time.perf_counter() - t0, 1)
 
-    dst = EXPERIMENTS_OUT / f"cub_experiments_{'smoke' if args.smoke else 'real'}.json"
+    kind = "smoke" if args.smoke else ("subsample" if args.n and args.n < n else "real")
+    dst = EXPERIMENTS_OUT / f"cub_experiments_{kind}.json"           # step 4 reads only the full-run files
     dst.write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"  wrote {dst}  ({out['elapsed_s']}s)", flush=True)
 

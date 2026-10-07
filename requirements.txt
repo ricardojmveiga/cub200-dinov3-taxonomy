@@ -5,7 +5,9 @@
 # the reported *means* are stable and reproduce, and the bundled result JSONs are the frozen
 # source of truth (the tests check against them). Deterministic methods (Ward) reproduce exactly.
 numpy>=1.24
-scipy>=1.10
+# not 1.15.x: its macOS wheels for Python 3.10 (the newest scipy for 3.10) fail to load on macOS 27
+# (dyld rejects a __thread_bss section); pip then takes 1.14 on Python 3.10 and the newest scipy on 3.11+.
+scipy>=1.10,!=1.15.*
 scikit-learn>=1.1
 threadpoolctl>=3.0          # runtime BLAS thread cap (also a scikit-learn dependency)
 matplotlib>=3.6

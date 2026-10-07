@@ -44,7 +44,7 @@ IMAGES_DIR = DATASET_DIR / "CUB_200_2011" / "images"
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--device", choices=["cuda", "mps", "cpu"], default=None,
                     help="compute device (default: auto, CUDA -> MPS -> CPU)")
     ap.add_argument("--batch-size", type=int, default=8, help="images per forward pass")

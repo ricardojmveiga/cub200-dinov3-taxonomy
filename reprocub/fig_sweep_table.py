@@ -32,8 +32,8 @@ plt.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42, "font.family": "seri
 def load():
     d = {}
     for f in sorted(glob.glob(os.path.join(OUT, "cub_experiments_*.json"))):
-        if "smoke" in os.path.basename(f):          # never mix random-data validation runs
-            continue
+        if any(w in os.path.basename(f) for w in ("smoke", "control", "subsample")):
+            continue                                # only full runs on the real embeddings
         j = json.load(open(f, encoding="utf-8"))
         for k in ("E1_divisive", "E2_ablation", "E3_pca_sweep"):
             if k in j:
@@ -112,7 +112,7 @@ def macros(d):
         from collections import Counter
         ol = json.load(open(lp, encoding="utf-8"))["labels"]["order"]
         m.append(f"\\newcommand{{\\MajorityOrderPct}}{{{round(Counter(ol).most_common(1)[0][1] / len(ol) * 100)}}}")
-    print("\n=== macro values (paste into the paper preamble; the .tex is self-contained) ===")
+    print("\n=== result macros (compare with data/paper_macros.tex) ===")
     print("\n".join(m))
     return m                                   # returned so tests can diff them against the .tex
 
@@ -145,7 +145,7 @@ def table_ablation(e2):
                 cells.append("--")
         rows.append(f"{disp[mth]} & " + " & ".join(cells) + " \\\\")
     rows += ["\\hline", "\\end{tabular}"]
-    print("\n=== ablation table (paste into the paper; the .tex is self-contained) ===")
+    print("\n=== Table 1 of the paper (ARI) ===")
     print("\n".join(rows))
 
 

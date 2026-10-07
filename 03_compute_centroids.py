@@ -59,7 +59,7 @@ def knn1_order(X: np.ndarray, order: np.ndarray, device: str, batch: int = 512) 
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--emb", type=Path, default=EMBEDDINGS_NPY,
                     help="embeddings .npy (default: data/cub200_cls_embeddings.npy)")
     ap.add_argument("--device", choices=["cuda", "mps", "cpu"], default=None,

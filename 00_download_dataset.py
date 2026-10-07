@@ -26,6 +26,7 @@ URL = "https://data.caltech.edu/records/65de6-vp158/files/CUB_200_2011.tgz"
 # CaltechDATA answers 403 Forbidden to urllib's default User-Agent, so the client names itself.
 HEADERS = {"User-Agent": "cub200-dinov3-taxonomy (+https://github.com/ricardojmveiga/cub200-dinov3-taxonomy)"}
 TGZ = DATASET_DIR / "CUB_200_2011.tgz"
+TGZ_BYTES = 1_150_585_339                                   # size of the CaltechDATA tarball
 IMAGES_DIR = DATASET_DIR / "CUB_200_2011" / "images"
 
 
@@ -79,12 +80,12 @@ def verify() -> bool:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--check", action="store_true", help="verify an existing extraction only")
     args = ap.parse_args()
     if not args.check:
         if not IMAGES_DIR.exists():
-            if not TGZ.exists() or TGZ.stat().st_size < 1_000_000_000:
+            if not TGZ.exists() or TGZ.stat().st_size < TGZ_BYTES:   # missing or partial: (re)start
                 _download(URL, TGZ)
             _extract(TGZ, DATASET_DIR)
         else:

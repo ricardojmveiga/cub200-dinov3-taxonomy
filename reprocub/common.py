@@ -127,10 +127,15 @@ def timed(name: str, sink: dict | None = None):
 
 
 def env_summary() -> dict:
-    """Reproducibility fingerprint: OS, python, numpy, and (if present) torch/CUDA."""
+    """Reproducibility fingerprint: OS, python, numpy/scipy/scikit-learn, and (if present) torch/CUDA."""
     info = {"os": platform.system(), "release": platform.release(),
             "machine": platform.machine(), "python": platform.python_version(),
             "numpy": np.__version__, "cpu_count": os.cpu_count(), "threads": n_threads()}
+    for mod, key in (("scipy", "scipy"), ("sklearn", "scikit_learn")):
+        try:
+            info[key] = __import__(mod).__version__
+        except Exception:
+            info[key] = None
     try:
         import torch
         info["torch"] = torch.__version__

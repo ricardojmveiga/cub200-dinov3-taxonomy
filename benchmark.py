@@ -156,7 +156,7 @@ def bench_cluster_torch(X: np.ndarray, device: str, reps: int, K: int = 200,
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--device", choices=["cuda", "mps", "cpu"], default=None,
                     help="time only this device (default: every device available)")
     ap.add_argument("--ops", nargs="*", default=["knn", "cluster"], choices=["knn", "cluster"],
