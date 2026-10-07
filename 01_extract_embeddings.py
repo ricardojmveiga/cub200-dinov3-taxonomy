@@ -69,7 +69,7 @@ def main() -> int:
     proc = AutoImageProcessor.from_pretrained(MODEL_ID)
     use_bf16 = dev == "cuda"
     model = AutoModel.from_pretrained(
-        MODEL_ID, torch_dtype=torch.bfloat16 if use_bf16 else torch.float32).to(dev).eval()
+        MODEL_ID, dtype=torch.bfloat16 if use_bf16 else torch.float32).to(dev).eval()
 
     out = np.empty((len(paths), EXPECTED_DIM), dtype=np.float32)
     t0 = time.perf_counter()

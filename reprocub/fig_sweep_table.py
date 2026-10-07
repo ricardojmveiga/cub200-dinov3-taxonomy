@@ -65,7 +65,8 @@ def fig_pca_sweep(e3):
     fig.tight_layout(pad=0.3)
     for ext in ("pdf", "png"):                                 # dual-format, as for fig_simmatrix
         out = os.path.join(FIG, f"fig_pca_sweep.{ext}")
-        fig.savefig(out, bbox_inches="tight", pad_inches=0.02, dpi=300)
+        fig.savefig(out, bbox_inches="tight", pad_inches=0.02, dpi=300,
+                    metadata={"CreationDate": None} if ext == "pdf" else None)   # no timestamp: reruns match
         print("wrote", out)
 
 

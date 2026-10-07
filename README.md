@@ -35,6 +35,8 @@ This takes about a minute, most of it installing packages. Everything it needs i
 stored clustering results. The tests check every number in the paper's Table 1 and preamble
 against those files, and CI runs them on Linux, Windows and macOS. The one number that needs the
 embeddings is the nearest-neighbour check (99.9 %), which runs once they are fetched (below).
+Running the tests or step 4 rewrites the files in `figures/`; under another matplotlib version they
+differ from the committed ones in bytes, not in what they show.
 
 ## Full pipeline, from the images
 
@@ -55,8 +57,8 @@ You can skip steps 0 and 1 by downloading the released embeddings:
 Notes:
 
 - Steps 2 to 4 need only `requirements.txt`. Step 1 also needs `requirements-torch.txt`
-  (`python3 setup_env.py --with-torch`; for a GPU, first install the CUDA build of PyTorch that
-  matches your driver, see <https://pytorch.org>) and `transformers` 4.56 or newer.
+  (`python3 setup_env.py --with-torch`: PyTorch, torchvision and `transformers` 4.56 or newer; on
+  Linux the default PyPI wheels already include CUDA, otherwise see <https://pytorch.org>).
 - The DINOv3 weights are gated on Hugging Face: accept the DINOv3 License on the
   [model page](https://huggingface.co/facebook/dinov3-vit7b16-pretrain-lvd1689m) and log in once
   (`hf auth login`, or set `HF_TOKEN`) before step 1. The first run downloads about 27 GB. Your use

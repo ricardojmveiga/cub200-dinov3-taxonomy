@@ -23,6 +23,8 @@ from reprocub.common import DATASET_DIR, DATA
 
 # Caltech DOI-hosted mirror of the official CUB-200-2011 release.
 URL = "https://data.caltech.edu/records/65de6-vp158/files/CUB_200_2011.tgz"
+# CaltechDATA answers 403 Forbidden to urllib's default User-Agent, so the client names itself.
+HEADERS = {"User-Agent": "cub200-dinov3-taxonomy (+https://github.com/ricardojmveiga/cub200-dinov3-taxonomy)"}
 TGZ = DATASET_DIR / "CUB_200_2011.tgz"
 IMAGES_DIR = DATASET_DIR / "CUB_200_2011" / "images"
 
@@ -30,7 +32,7 @@ IMAGES_DIR = DATASET_DIR / "CUB_200_2011" / "images"
 def _download(url: str, dst: Path) -> None:
     dst.parent.mkdir(parents=True, exist_ok=True)
     have = dst.stat().st_size if dst.exists() else 0
-    req = urllib.request.Request(url, headers={"Range": f"bytes={have}-"} if have else {})
+    req = urllib.request.Request(url, headers={**HEADERS, **({"Range": f"bytes={have}-"} if have else {})})
     try:
         resp = urllib.request.urlopen(req, timeout=60)
     except urllib.error.HTTPError as e:

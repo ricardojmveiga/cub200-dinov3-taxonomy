@@ -1,8 +1,9 @@
 # OPTIONAL -- only for step 1 (DINOv3-7B embedding extraction) and the GPU/MPS benchmark.
-# Install a torch build that matches your platform first (see https://pytorch.org):
-#   CUDA 12.1 : pip install torch --index-url https://download.pytorch.org/whl/cu121
-#   macOS/CPU : pip install torch
-# transformers must support DINOv3 (added in transformers 4.56.0).
+# Linux: the default PyPI wheels of torch/torchvision include CUDA. Windows with a GPU: install the
+# CUDA build of torch and torchvision first, from https://pytorch.org. macOS: the default wheels use MPS.
+# transformers must support DINOv3 (added in transformers 4.56.0); its DINOv3 image processor
+# needs torchvision (install the build that matches your torch).
 torch>=2.0
+torchvision
 transformers>=4.56
 pillow>=9.0

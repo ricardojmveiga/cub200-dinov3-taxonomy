@@ -107,5 +107,6 @@ for c in range(4):                                                             #
 
 for ext in ("pdf", "png"):
     out = str(_FIG / f"fig_simmatrix.{ext}")
-    fig.savefig(out, bbox_inches="tight", pad_inches=0.0, dpi=300)
+    fig.savefig(out, bbox_inches="tight", pad_inches=0.0, dpi=300,
+                metadata={"CreationDate": None} if ext == "pdf" else None)   # no timestamp: reruns match
     print("wrote", out)

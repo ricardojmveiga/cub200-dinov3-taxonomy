@@ -11,6 +11,7 @@ needed -- it prints the exact commands to run afterwards.
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 import venv
@@ -29,14 +30,18 @@ def venv_python(vdir: Path) -> Path:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--with-torch", action="store_true",
-                    help="also install torch/transformers/pillow (extraction + GPU/MPS)")
-    ap.add_argument("--venv", type=Path, default=VENV)
+                    help="also install torch/torchvision/transformers/pillow (extraction + GPU/MPS)")
+    ap.add_argument("--venv", type=Path, default=VENV, help="where to create the environment (default: .venv)")
     args = ap.parse_args()
 
-    if not venv_python(args.venv).exists():
-        print(f"[setup] creating venv at {args.venv} ...", flush=True)
-        venv.EnvBuilder(with_pip=True, clear=False).create(args.venv)
     py = venv_python(args.venv)
+    healthy = py.exists() and subprocess.run([str(py), "-m", "pip", "--version"],
+                                             capture_output=True).returncode == 0
+    if not healthy:                                     # missing, or left broken by a failed run
+        print(f"[setup] creating venv at {args.venv} ...", flush=True)
+        # Symlink the interpreter on macOS/Linux, as `python -m venv` does: a COPIED interpreter
+        # from a relocatable build (uv, python-build-standalone) aborts when ensurepip runs.
+        venv.EnvBuilder(with_pip=True, clear=True, symlinks=(os.name != "nt")).create(args.venv)
 
     def pip(*a):
         subprocess.run([str(py), "-m", "pip", *a], check=True)
@@ -44,7 +49,8 @@ def main() -> int:
     pip("install", "--upgrade", "pip")
     pip("install", "-r", str(ROOT / "requirements.txt"))
     if args.with_torch:
-        print("[setup] installing torch/transformers (choose the CUDA wheel yourself for a GPU)", flush=True)
+        print("[setup] installing torch/torchvision/transformers (for a GPU, install the CUDA build of "
+              "torch and torchvision first)", flush=True)
         pip("install", "-r", str(ROOT / "requirements-torch.txt"))
 
     activate = (args.venv / "Scripts" / "activate") if sys.platform.startswith("win") \
