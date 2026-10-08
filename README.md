@@ -1,6 +1,11 @@
 # Does Taxonomy Emerge for Birds Too? A Fine-Coarse Dissociation in Label-Free Taxonomic Recovery on CUB-200
 
 [![CI](https://github.com/ricardojmveiga/cub200-dinov3-taxonomy/actions/workflows/ci.yml/badge.svg)](https://github.com/ricardojmveiga/cub200-dinov3-taxonomy/actions/workflows/ci.yml)
+[![Code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
+[![Data: CC BY-NC 4.0](https://img.shields.io/badge/data-CC%20BY--NC%204.0-lightgrey)](DATA_TERMS.md)
+[![Python 3.9-3.14](https://img.shields.io/badge/python-3.9%E2%80%933.14-blue)](#tests-and-ci)
+[![Hugging Face dataset](https://img.shields.io/badge/%F0%9F%A4%97%20dataset-embeddings-yellow)](https://huggingface.co/datasets/ricardojmveiga/cub200-dinov3-taxonomy)
+[![Hugging Face demo](https://img.shields.io/badge/%F0%9F%A4%97%20demo-try%20it-orange)](https://huggingface.co/spaces/ricardojmveiga/cub200-dinov3-taxonomy)
 
 Code and data for the RECPAD 2026 paper by Ricardo J. M. Veiga and João M. F. Rodrigues
 (NOVA LINCS & ISE, Universidade do Algarve, Faro, Portugal).
@@ -10,10 +15,50 @@ On CUB-200-2011, frozen DINOv3-7B CLS features clustered without labels recover 
 chance: ARI at most 0.092 across six standard clusterers, and below 0.1 at every dimensionality of a
 PCA sweep.
 
+<p align="center">
+  <img src="docs/tree.png" width="100%" alt="Radial tree of the 11,788 bird images built by Ward clustering of DINOv3 features, down to 200 groups coloured by biological order">
+</p>
+<p align="center"><sub>
+The paper's Ward clustering drawn as a tree. Ward builds one tree over the 11,788 images; cut into 200, 121, 37
+and 13 groups, it scores ARI 0.703, 0.587, 0.376 and 0.012 against species, genera, families and orders (Table 1).
+Rim tiles: the order most images of each of the 200 groups belong to. Branches are coloured by order where every
+group below shares one, grey where orders mix; the shaded sectors are the 13 groups. Drawn by
+<a href="docs/make_readme_figures.py">docs/make_readme_figures.py</a> from the released embeddings.
+</sub></p>
+
 - **Embeddings** (193 MB): [Hugging Face dataset `ricardojmveiga/cub200-dinov3-taxonomy`](https://huggingface.co/datasets/ricardojmveiga/cub200-dinov3-taxonomy), also attached to the [v1.0.0 release](https://github.com/ricardojmveiga/cub200-dinov3-taxonomy/releases/tag/v1.0.0)
 - **Interactive demo**: [Hugging Face Space `ricardojmveiga/cub200-dinov3-taxonomy`](https://huggingface.co/spaces/ricardojmveiga/cub200-dinov3-taxonomy)
 
 **Built with DINOv3.**
+
+## Results at a glance
+
+<table>
+  <tr>
+    <td width="50%" valign="top"><img src="docs/methods.png" alt="Table 1 as dots: six clusterers per rank"><br>
+      <sub><b>Six clusterers, one dot each</b> (Table 1, mean ARI at each rank's true number of groups). Species
+      and genus recover; no method lifts Order above 0.092.</sub></td>
+    <td width="50%" valign="top"><img src="figures/fig_pca_sweep.png" alt="Figure 1: ARI against PCA dimensionality"><br>
+      <sub><b>Figure 1.</b> ARI against PCA dimensionality under flat k-means. Species and genus reach their
+      full-dimensional score by 256 dimensions; Order stays near chance at every dimensionality.</sub></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="figures/fig_simmatrix.png" width="52%" alt="Figure 2: cosine similarity of the 200 species centroids, ordered by taxonomy">
+</p>
+<p align="center"><sub>
+<b>Figure 2.</b> Cosine similarity of the 200 species centroids in 4096-D, ordered by taxonomy. Genus and family
+blocks light up along the diagonal; the 67% of images that are Passeriformes form no order-level block.
+</sub></p>
+
+## Interactive demo
+
+[![Screenshot of the interactive demo: the Horned Puffin, its nearest species and a photo](docs/demo.png)](https://huggingface.co/spaces/ricardojmveiga/cub200-dinov3-taxonomy)
+
+<sub>Pick a species to see its nearest species in DINOv3's feature space; other tabs show the six clusterers, the
+PCA sweep and the similarity matrix at every dimensionality. The photo is a visual aid from Wikimedia Commons, not a
+CUB-200-2011 image (here: U.S. Fish &amp; Wildlife Service, public domain). It runs in the browser; nothing to install.</sub>
 
 ## Quick start: the paper's figures and Table 1 (no GPU, no dataset)
 
@@ -175,6 +220,7 @@ cub200-dinov3-taxonomy/
 ├── data/                      # labels, image list, species and order names, centroids,
 │                              #   clustering results, the paper's result macros
 ├── figures/                   # regenerated figures
+├── docs/                      # README images; make_readme_figures.py redraws tree.png and methods.png
 ├── benchmarks/                # timing files behind the benchmark table
 ├── tests/                     # pytest suite
 ├── third_party/               # licences of the DINOv3 model and the CUB hierarchy
