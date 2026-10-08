@@ -30,6 +30,9 @@ python3 setup_env.py                  # creates .venv and installs the CPU depen
 On Windows, use `py setup_env.py`, then `.venv\Scripts\python -m pytest tests/` and
 `.venv\Scripts\python 04_make_figures.py`. Activating the environment first
 (`source .venv/bin/activate`, or `.venv\Scripts\activate` on Windows) lets you type `python` instead.
+With [uv](https://docs.astral.sh/uv/), the equivalent is
+`uv venv --python 3.13 .venv` followed by
+`uv pip install --python .venv/bin/python -r requirements.txt` (add `-r requirements-torch.txt` for step 1).
 
 This takes a few minutes, most of it installing packages. Everything it needs is bundled in
 [`data/`](data/): the integer taxonomy labels, the image order, the 200 species centroids and the
@@ -44,7 +47,7 @@ differ from the committed ones in bytes, not in what they show.
 | Step | Script | Needs | What it does |
 | --- | --- | --- | --- |
 | 0 | `00_download_dataset.py` | ~2.3 GB disk | Downloads CUB-200-2011 from CaltechDATA (1.15 GB, kept after extraction) and extracts the 11,788 images. |
-| 1 | `01_extract_embeddings.py` | CUDA GPU (the authors used a 24 GB RTX 3090; with 16 GB try `--batch-size 1`), access to the gated DINOv3 weights | Frozen DINOv3-7B CLS token → `(11788, 4096)` float32, L2-normalised, in the order of `data/cub200_image_paths.json`. |
+| 1 | `01_extract_embeddings.py` | a CUDA GPU, Apple silicon with 24 GB of memory, or a CPU with 32 GB of RAM (see the notes); access to the gated DINOv3 weights | Frozen DINOv3-7B CLS token → `(11788, 4096)` float32, L2-normalised, in the order of `data/cub200_image_paths.json`. |
 | 2 | `02_run_experiments.py` | CPU, the embeddings | E1 divisive vs flat, **E2 the six clusterers (Table 1)**, **E3 the PCA sweep (Figure 1)**. `--smoke` runs on random features instead (ARI ≈ 0 check, one to two minutes). |
 | 3 | `03_compute_centroids.py` | any device, the embeddings | Species centroids (Figure 2) and **kNN@1@Order = 99.9 %**. |
 | 4 | `04_make_figures.py` | CPU | Figure 1, Figure 2, Table 1 and the result values, from `data/`. |
@@ -52,7 +55,7 @@ differ from the committed ones in bytes, not in what they show.
 ```bash
 python3 setup_env.py --with-torch                  # adds PyTorch, torchvision and transformers
 .venv/bin/python 00_download_dataset.py
-.venv/bin/python 01_extract_embeddings.py          # GPU; see the notes below
+.venv/bin/python 01_extract_embeddings.py          # see the notes below
 .venv/bin/python 02_run_experiments.py             # CPU, about 80 minutes
 .venv/bin/python 03_compute_centroids.py
 .venv/bin/python 04_make_figures.py
@@ -77,7 +80,18 @@ Notes:
   licence.
 - Step 1 matches the extraction behind the released file (bfloat16 weights, forward pass under
   bfloat16 autocast, float32 before normalising), so a re-extraction agrees with it closely, not bit
-  for bit. `--limit 64 --out data/smoke_64.npy` is a quick check; without `--out` it overwrites
+  for bit. Measured on the first 10 images, each run compared with the released vectors:
+
+  | Device | Precision | Speed | Memory | Cosine to the released vectors |
+  | --- | --- | --- | --- | --- |
+  | CUDA, RTX 3090 (24 GB) | bfloat16 | about 0.26 s per image | 14.4 GB of GPU memory | ≥ 0.99993 |
+  | Apple MPS, M3 with 24 GB | bfloat16 | about 18 s per image | 17.1 GB peak | ≥ 0.99994 |
+  | CPU, 24-core x86 | float32 | about 17 s per image | 28.3 GB peak resident | ≥ 0.99989 |
+
+  The device is picked automatically (CUDA, then MPS, then CPU). `--dtype bf16` on that CPU was
+  slower (97 s per image, 40 GB peak resident), so keep the default there. Loading the model takes
+  about a minute the first time, plus the 27 GB download.
+  `--limit 10 --out data/smoke_10.npy` is a quick check; without `--out` it overwrites
   `data/cub200_cls_embeddings.npy`.
 - `02_run_experiments.py --control` writes `cub_experiments_control_rerun.json` and `--n N` writes
   `cub_experiments_subsample.json`; neither replaces the bundled results.
