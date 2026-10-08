@@ -1,9 +1,8 @@
 # Core dependencies for steps 2-4 (experiments, centroids, figures) + tests.
 # CPU-only, cross-platform (Windows / macOS / Linux). No GPU needed.
-# Reproducibility note: stochastic per-seed clustering values (MiniBatch k-means) are
-# scikit-learn-version / BLAS-summation sensitive, especially on the near-chance Order rank;
-# the reported *means* are stable and reproduce, and the bundled result JSONs are the frozen
-# source of truth (the tests check against them). Deterministic methods (Ward) reproduce exactly.
+# Reproducibility note: five of the six clusterers reproduce Table 1 to three decimals. Spectral
+# clustering's exact values depend on the number of CPU threads (see README; the paper used 24).
+# The bundled result JSONs are the reference the tests check.
 numpy>=1.24
 # not 1.15.x: its macOS wheels for Python 3.10 (the newest scipy for 3.10) fail to load on macOS 27
 # (dyld rejects a __thread_bss section); pip then takes 1.14 on Python 3.10 and the newest scipy on 3.11+.

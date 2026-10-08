@@ -82,9 +82,15 @@ Notes:
 - `02_run_experiments.py --control` writes `cub_experiments_control_rerun.json` and `--n N` writes
   `cub_experiments_subsample.json`; neither replaces the bundled results.
 - A full step-2 run writes `data/experiments_out/cub_experiments_real.json`, which step 4 then uses
-  in place of the bundled results. The bundled runs took about 25 min (E1 and E3) and 53 min (E2).
-  Per-seed values of the stochastic clusterers can differ slightly across scikit-learn and BLAS
-  versions; the means reproduce, and the bundled JSON files are the reference the tests use.
+  in place of the bundled results. The paper's runs used all 24 cores of the authors' workstation:
+  there, `02_run_experiments.py --threads 24` reproduces all 24 cells of Table 1 exactly (E2 takes
+  about 20 minutes). By default the script leaves one core free.
+- Spectral clustering is the one method whose exact values depend on the number of CPU threads. Its
+  15-nearest-neighbour graph splits into 42 disconnected pieces, so rounding differences decide
+  between equally valid solutions. With 23 threads instead of 24, its family, genus and species ARI
+  come out as 0.304, 0.265 and 0.696 instead of 0.333, 0.279 and 0.739; with other thread counts the
+  species value ranged from 0.49 to 0.75. The other five methods reproduce to three decimals. The
+  bundled JSON files are the reference the tests use.
 - Step 3 overwrites the bundled centroid files in `data/` (with identical values if the embeddings
   are the released ones); `--out DIR` writes them elsewhere.
 

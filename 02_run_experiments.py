@@ -44,7 +44,7 @@ def main() -> int:
                     help="random-feature control at the REAL oracle K -> cub_experiments_control_rerun.json")
     ap.add_argument("--n", type=int, default=0, help="subsample to N points (smoke defaults to 500)")
     ap.add_argument("--only", nargs="*", choices=["e1", "e2", "e3"], help="run only these studies")
-    ap.add_argument("--threads", type=int, default=None, help="CPU threads (default cores-1)")
+    ap.add_argument("--threads", type=int, default=None, help="CPU threads (default cores-1; the paper's runs used all 24 cores, and spectral clustering's values depend on it)")
     args = ap.parse_args()
     if args.smoke and not args.n:
         args.n = 500          # spectral/GMM are superlinear in n; keep the bare --smoke gate fast
