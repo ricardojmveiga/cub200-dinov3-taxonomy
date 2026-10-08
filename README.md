@@ -10,8 +10,8 @@ On CUB-200-2011, frozen DINOv3-7B CLS features clustered without labels recover 
 chance: ARI at most 0.092 across six standard clusterers, and below 0.1 at every dimensionality of a
 PCA sweep.
 
-- **Embeddings** (193 MB): [Hugging Face dataset `ricardojmveiga/cub200-dinov3-7b-embeddings`](https://huggingface.co/datasets/ricardojmveiga/cub200-dinov3-7b-embeddings), also attached to the [v1.0.0 release](https://github.com/ricardojmveiga/cub200-dinov3-taxonomy/releases/tag/v1.0.0)
-- **Interactive demo**: [Hugging Face Space `ricardojmveiga/cub200-dinov3-taxonomy-demo`](https://huggingface.co/spaces/ricardojmveiga/cub200-dinov3-taxonomy-demo)
+- **Embeddings** (193 MB): [Hugging Face dataset `ricardojmveiga/cub200-dinov3-taxonomy`](https://huggingface.co/datasets/ricardojmveiga/cub200-dinov3-taxonomy), also attached to the [v1.0.0 release](https://github.com/ricardojmveiga/cub200-dinov3-taxonomy/releases/tag/v1.0.0)
+- **Interactive demo**: [Hugging Face Space `ricardojmveiga/cub200-dinov3-taxonomy`](https://huggingface.co/spaces/ricardojmveiga/cub200-dinov3-taxonomy)
 
 **Built with DINOv3.**
 

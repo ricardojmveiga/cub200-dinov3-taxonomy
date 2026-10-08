@@ -3,7 +3,7 @@
 The MIT License in [LICENSE](LICENSE) covers the source code only. It does not cover the data: the
 files in `data/` and `figures/`, and the embeddings file `cub200_cls_embeddings.npy` (attached to the
 GitHub release v1.0.0 and published as the Hugging Face dataset
-`ricardojmveiga/cub200-dinov3-7b-embeddings`). The data are derived from the three sources below,
+`ricardojmveiga/cub200-dinov3-taxonomy`). The data are derived from the three sources below,
 whose terms continue to apply.
 
 ## 1. CUB-200-2011

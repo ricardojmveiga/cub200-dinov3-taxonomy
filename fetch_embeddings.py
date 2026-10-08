@@ -2,7 +2,7 @@
 """Fetch the pre-computed DINOv3-7B CLS embeddings (193 MB) so the pipeline runs GPU-free.
 
 Two hosted copies of the same file (no login needed):
-  * Hugging Face dataset  ricardojmveiga/cub200-dinov3-7b-embeddings
+  * Hugging Face dataset  ricardojmveiga/cub200-dinov3-taxonomy
   * GitHub release asset  ricardojmveiga/cub200-dinov3-taxonomy v1.0.0
 
     python fetch_embeddings.py                  # auto: Hugging Face first, the GitHub release if that fails
@@ -27,7 +27,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from reprocub.common import EMBEDDINGS_NPY
 
-HF_REPO = "ricardojmveiga/cub200-dinov3-7b-embeddings"      # Hugging Face dataset
+HF_REPO = "ricardojmveiga/cub200-dinov3-taxonomy"      # Hugging Face dataset
 GH_REPO = "ricardojmveiga/cub200-dinov3-taxonomy"           # GitHub repo (release host)
 TAG = "v1.0.0"
 ASSET = "cub200_cls_embeddings.npy"
