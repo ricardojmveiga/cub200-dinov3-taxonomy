@@ -49,27 +49,27 @@ def methods_figure() -> None:
             "ward": "Ward", "gmm_diag": "GMM", "spectral": "spectral"}
     _, oracle, _ = common.load_labels()
     blue, red = "#0072B2", "#D55E00"
-    fig, ax = plt.subplots(figsize=(9.6, 5.4))
+    fig, ax = plt.subplots(figsize=(5.6, 3.6))          # small canvas: shown at half the README width
     rows = [("species", "Species"), ("genus", "Genus"), ("family", "Family"), ("order", "Order")]
     for y, (rank, label) in enumerate(reversed(rows)):
         vals = {m: E2[m][rank]["ari"]["mean"] for m in name}
         lo, hi = min(vals.values()), max(vals.values()); best = max(vals, key=vals.get)
         c = red if rank == "order" else blue
-        ax.plot([lo, hi], [y, y], color=c, lw=16, alpha=0.22, solid_capstyle="round", zorder=1)
-        ax.scatter(list(vals.values()), [y] * len(vals), s=170, color=c, edgecolor="white", linewidth=1.4, zorder=3)
-        ax.text(hi + 0.025, y + 0.06, f"{hi:.3f}", va="center", ha="left", fontsize=17, fontweight="bold", color=c)
-        ax.text(hi + 0.025, y - 0.30, f"best: {name[best]}", va="center", ha="left", fontsize=12, color=MUT)
-        ax.text(-0.07, y + 0.06, label, va="center", ha="right", fontsize=17, fontweight="bold", color=INK)
-        ax.text(-0.07, y - 0.30, f"{oracle[rank]} groups", va="center", ha="right", fontsize=12, color=MUT)
+        ax.plot([lo, hi], [y, y], color=c, lw=11, alpha=0.22, solid_capstyle="round", zorder=1)
+        ax.scatter(list(vals.values()), [y] * len(vals), s=80, color=c, edgecolor="white", linewidth=1.4, zorder=3)
+        ax.text(hi + 0.025, y + 0.06, f"{hi:.3f}", va="center", ha="left", fontsize=13, fontweight="bold", color=c)
+        ax.text(hi + 0.025, y - 0.32, f"best: {name[best]}", va="center", ha="left", fontsize=9.5, color=MUT)
+        ax.text(-0.07, y + 0.06, label, va="center", ha="right", fontsize=13, fontweight="bold", color=INK)
+        ax.text(-0.07, y - 0.32, f"{oracle[rank]} groups", va="center", ha="right", fontsize=9.5, color=MUT)
     ax.axvline(0, color="#8d939c", lw=1.2, ls=(0, (5, 4)), zorder=0)
     ax.set_xlim(-0.33, 1.02); ax.set_ylim(-0.6, 3.55); ax.set_yticks([])
     ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8]); ax.set_xticklabels(["0\nrandom", "0.2", "0.4", "0.6", "0.8"])
-    ax.set_xlabel("agreement with the taxonomy (ARI), one dot per clusterer", fontsize=13, color=INK, labelpad=6)
-    ax.tick_params(axis="x", labelsize=12, length=5, color="#8d939c")
+    ax.set_xlabel("agreement with the taxonomy (ARI), one dot per clusterer", fontsize=10.5, color=INK, labelpad=5)
+    ax.tick_params(axis="x", labelsize=10, length=4, color="#8d939c")
     for s in ("top", "right", "left"):
         ax.spines[s].set_visible(False)
     ax.spines["bottom"].set_color("#8d939c"); ax.spines["bottom"].set_bounds(0, 0.8)
-    fig.savefig(OUT / "methods.png", dpi=110, bbox_inches="tight", pad_inches=0.15, facecolor="white",
+    fig.savefig(OUT / "methods.png", dpi=190, bbox_inches="tight", pad_inches=0.15, facecolor="white",
                 metadata={"Software": None}); plt.close(fig)
     print("wrote", OUT / "methods.png")
 
