@@ -12,6 +12,13 @@ authors:
     affiliation: "NOVA LINCS & ISE, Universidade do Algarve"
     orcid: "https://orcid.org/0000-0002-3562-6025"
 repository-code: "https://github.com/ricardojmveiga/cub200-dinov3-taxonomy"
+identifiers:
+  - type: url
+    value: "https://huggingface.co/datasets/ricardojmveiga/cub200-dinov3-taxonomy"
+    description: "The released DINOv3-7B embeddings, labels and centroids (Hugging Face dataset)"
+  - type: url
+    value: "https://huggingface.co/spaces/ricardojmveiga/cub200-dinov3-taxonomy"
+    description: "Interactive demo (Hugging Face Space)"
 license: MIT
 version: 1.0.0
 keywords:
